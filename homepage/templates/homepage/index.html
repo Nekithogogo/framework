@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Главная – RackKeeper
+{% endblock %}
+
+{% block content %}
+    <h1 class="display-5">RackKeeper</h1>
+    <p class="lead">Система учета серверного оборудования.</p>
+    <p>
+        Учет серверов, установленного в них оборудования, его характеристик
+        и состояния: где стоит каждый модуль, есть ли в сервере свободный
+        слот и какое оборудование требует внимания.
+    </p>
+
+    <div class="row g-3 mb-4">
+        <div class="col-sm-4">
+            <div class="rk-stat">
+                <div class="rk-stat-value">{{ servers|length }}</div>
+                серверов в учете
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="rk-stat">
+                <div class="rk-stat-value">{{ equipment|length }}</div>
+                единиц оборудования, установлено {{ installed_count }}
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="rk-stat rk-stat-warning">
+                <div class="rk-stat-value">{{ attention|length }}</div>
+                требуют внимания
+            </div>
+        </div>
+    </div>
+
+    {% if attention %}
+        <h2 class="h5">Требуют внимания</h2>
+        <ul class="list-group mb-4">
+            {% for item in attention %}
+                <li class="list-group-item d-flex justify-content-between">
+                    <a href="{% url 'equipment:detail' item.id %}">
+                        {{ item.name }}
+                    </a>
+                    {% include "equipment/includes/equipment_state.html" with state=item.state %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <p>Основные разделы:</p>
+    <a href="{% url 'servers:list' %}" class="btn btn-primary me-2">
+        Серверы
+    </a>
+    <a href="{% url 'equipment:list' %}" class="btn btn-secondary">
+        Оборудование
+    </a>
+{% endblock %}

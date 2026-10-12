@@ -41,6 +41,11 @@ class Equipment(Entity):
         """Признак того, что оборудование установлено в сервер."""
         return self.server is not None
 
+    @property
+    def needs_attention(self) -> bool:
+        """Оборудование неисправно или в ремонте (но не списано)."""
+        return not self.state.is_working and not self.state.is_decommissioned
+
     def can_be_installed(self) -> bool:
         """Проверить, что оборудование исправно и еще не установлено."""
         return self.state.is_working and not self.is_installed

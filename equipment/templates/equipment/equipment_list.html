@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Оборудование – RackKeeper
+{% endblock %}
+
+{% block content %}
+    <h1>Оборудование</h1>
+    <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
+        <p class="mb-0">Всего единиц: {{ equipment|length }}</p>
+        <input
+            type="search"
+            id="equipment-filter"
+            class="form-control w-auto"
+            placeholder="Фильтр: название, S/N, сервер"
+        >
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle bg-white">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Название</th>
+                    <th>Тип</th>
+                    <th>Серийный номер</th>
+                    <th>Сервер</th>
+                    <th>Состояние</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in equipment %}
+                    <tr data-filter-row>
+                        <td>{{ item.id }}</td>
+                        <td>
+                            <a href="{% url 'equipment:detail' item.id %}">
+                                {{ item.name|default:"Без названия" }}
+                            </a>
+                        </td>
+                        <td>{{ item.kind }}</td>
+                        <td class="serial-number">{{ item.serial_number }}</td>
+                        <td>
+                            {% if item.server %}
+                                <a href="{% url 'servers:detail' item.server.id %}">
+                                    {{ item.server.name }}
+                                </a>
+                            {% else %}
+                                на складе
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% include "equipment/includes/equipment_state.html" with state=item.state %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6">Оборудование не найдено.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

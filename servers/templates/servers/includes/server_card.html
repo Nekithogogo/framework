@@ -1,0 +1,39 @@
+<article class="card server-card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start gap-2">
+            <div>
+                <h2 class="h5 card-title mb-0">
+                    {{ row.server.name|default:"Без названия" }}
+                </h2>
+                <span class="server-location">
+                    {{ row.server.location|default:"расположение не указано" }}
+                </span>
+            </div>
+            {% if row.free %}
+                <span class="badge bg-success">
+                    свободно {{ row.free }} из {{ row.server.slots }}
+                </span>
+            {% else %}
+                <span class="badge bg-danger">свободных слотов нет</span>
+            {% endif %}
+        </div>
+        <div class="load-bar my-3">
+            <div
+                class="load-bar-fill {% if row.level == 'высокая' %}load-high{% endif %}"
+                style="width: {{ row.load|floatformat:'0u' }}%"
+            ></div>
+        </div>
+        <p class="card-text">
+            Загрузка {{ row.load|floatformat:1 }}% ({{ row.level }}),
+            занято слотов: {{ row.used }}
+        </p>
+        {% if not is_detail_page %}
+            <a
+                href="{% url 'servers:detail' row.server.id %}"
+                class="btn btn-primary btn-sm"
+            >
+                Подробнее
+            </a>
+        {% endif %}
+    </div>
+</article>

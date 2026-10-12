@@ -1,0 +1,127 @@
+/* Собственные стили RackKeeper (поверх Bootstrap) */
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f4f6f8;
+}
+
+main {
+    flex: 1;
+}
+
+/* Шапка, логотип и навигация */
+
+.rk-header {
+    background-color: #212529;
+    padding: 0.5rem 0;
+}
+
+.rk-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.rk-brand:hover {
+    color: #adb5bd;
+}
+
+.rk-logo {
+    width: 40px;
+    height: auto;
+}
+
+.rk-nav .nav-link {
+    color: #adb5bd;
+}
+
+.rk-nav .nav-link:hover,
+.rk-nav .nav-link.active {
+    color: #fff;
+    border-bottom: 2px solid #20c997;
+}
+
+.rk-footer {
+    margin-top: 2rem;
+    padding: 1rem 0;
+    color: #6c757d;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Сводка на главной */
+
+.rk-stat {
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: #fff;
+    border-left: 4px solid #20c997;
+}
+
+.rk-stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.rk-stat-warning {
+    border-left-color: #dc3545;
+}
+
+/* Карточка сервера и шкала загрузки */
+
+.server-card {
+    margin-bottom: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+}
+
+.server-card:hover {
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
+}
+
+.server-location {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.load-bar {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #e9ecef;
+    overflow: hidden;
+}
+
+.load-bar-fill {
+    height: 100%;
+    background-color: #20c997;
+}
+
+.load-bar-fill.load-high {
+    background-color: #dc3545;
+}
+
+/* Состояние оборудования */
+
+.equipment-state {
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.equipment-state-faulty {
+    animation: rk-blink 1.5s ease-in-out infinite;
+}
+
+@keyframes rk-blink {
+    50% {
+        opacity: 0.55;
+    }
+}
+
+.serial-number {
+    font-family: monospace;
+}

@@ -1,0 +1,9 @@
+{% if state.is_working %}
+    <span class="badge bg-success equipment-state">{{ state.name }}</span>
+{% elif state.is_decommissioned %}
+    <span class="badge bg-secondary equipment-state">{{ state.name }}</span>
+{% else %}
+    <span class="badge bg-danger equipment-state equipment-state-faulty">
+        {{ state.name }}
+    </span>
+{% endif %}

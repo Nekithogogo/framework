@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if item %}
+        {{ item.name }} – RackKeeper
+    {% else %}
+        Оборудование не найдено – RackKeeper
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if item %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h1 class="card-title h3">{{ item.name }}</h1>
+                <p class="card-text"><strong>ID:</strong> {{ item.id }}</p>
+                <p class="card-text"><strong>Тип:</strong> {{ item.kind }}</p>
+                <p class="card-text">
+                    <strong>Серийный номер:</strong>
+                    <span class="serial-number">{{ item.serial_number|upper }}</span>
+                </p>
+                <p class="card-text">
+                    <strong>Сервер:</strong>
+                    {% if item.server %}
+                        <a href="{% url 'servers:detail' item.server.id %}"
+                        >{{ item.server.name }}</a>,
+                        установлено {{ item.installed_at|date:"d.m.Y" }}
+                    {% else %}
+                        на складе
+                    {% endif %}
+                </p>
+                <p class="card-text">
+                    <strong>Состояние:</strong>
+                    {% include "equipment/includes/equipment_state.html" with state=item.state %}
+                </p>
+                <p class="card-text">
+                    <strong>Можно установить в сервер:</strong>
+                    {{ item.can_be_installed|yesno:"да,нет" }}
+                </p>
+            </div>
+        </div>
+
+        <h2 class="h4">Характеристики ({{ item.characteristics|length }})</h2>
+        <table class="table table-sm bg-white">
+            <tbody>
+                {% for characteristic in item.characteristics %}
+                    <tr>
+                        <th scope="row">{{ characteristic.name }}</th>
+                        <td>{{ characteristic.value }} {{ characteristic.unit }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td>Характеристики не указаны.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <h1 class="text-danger">Оборудование не найдено</h1>
+        <p>Оборудование с указанным идентификатором отсутствует.</p>
+    {% endif %}
+    <a
+        href="{% url 'equipment:list' %}"
+        class="btn btn-outline-secondary mt-3"
+    >
+        ← к списку оборудования
+    </a>
+{% endblock %}

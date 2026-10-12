@@ -1,0 +1,16 @@
+{% with section=request.resolver_match.app_name %}
+<nav class="nav rk-nav">
+    <a
+        class="nav-link {% if section == 'homepage' %}active{% endif %}"
+        href="{% url 'homepage:index' %}"
+    >Главная</a>
+    <a
+        class="nav-link {% if section == 'servers' %}active{% endif %}"
+        href="{% url 'servers:list' %}"
+    >Серверы</a>
+    <a
+        class="nav-link {% if section == 'equipment' %}active{% endif %}"
+        href="{% url 'equipment:list' %}"
+    >Оборудование</a>
+</nav>
+{% endwith %}

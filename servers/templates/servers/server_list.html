@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Серверы – RackKeeper
+{% endblock %}
+
+{% block content %}
+    <h1>Серверы</h1>
+    <p>Всего серверов: {{ server_rows|length }}</p>
+    {% for row in server_rows %}
+        {% include "servers/includes/server_card.html" %}
+    {% empty %}
+        <p>Серверы не найдены.</p>
+    {% endfor %}
+{% endblock %}
