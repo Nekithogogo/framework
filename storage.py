@@ -128,3 +128,19 @@ def load_equipment(
 def save_equipment(filename: str, equipment: List[Equipment]) -> None:
     """Сохранить оборудование: ссылки на объекты → идентификаторы."""
     save_objects(filename, equipment)
+
+
+def load_inventory(
+    data_dir: "str | os.PathLike[str]",
+) -> tuple[List[Server], List[State], List[Equipment]]:
+    """Загрузить все данные проекта из каталога data_dir.
+
+    Порядок важен: оборудование ссылается на серверы и состояния,
+    поэтому они загружаются первыми.
+    """
+    servers = load_servers(os.path.join(data_dir, "servers.json"))
+    states = load_states(os.path.join(data_dir, "states.json"))
+    equipment = load_equipment(
+        os.path.join(data_dir, "equipment.json"), servers, states
+    )
+    return servers, states, equipment

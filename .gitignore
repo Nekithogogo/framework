@@ -14,3 +14,6 @@ staticfiles/
 # IDE
 .idea/
 .vscode/
+
+# Локальные настройки Claude Code
+.claude/
