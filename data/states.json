@@ -1,0 +1,6 @@
+[
+    {"id": 1, "code": "working", "name": "Исправно", "is_working": true},
+    {"id": 2, "code": "faulty", "name": "Неисправно", "is_working": false},
+    {"id": 3, "code": "repair", "name": "В ремонте", "is_working": false},
+    {"id": 4, "code": "decommissioned", "name": "Списано", "is_working": false}
+]

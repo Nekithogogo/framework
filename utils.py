@@ -1,6 +1,8 @@
 """Вспомогательные функции безопасного ввода данных."""
 from datetime import date, datetime
-from typing import Optional
+from typing import Hashable, Optional, TypeVar
+
+K = TypeVar("K", bound=Hashable)
 
 
 def input_int(prompt: str, min_value: Optional[int] = None) -> int:
@@ -42,7 +44,7 @@ def input_date(prompt: str) -> date:
             print("Введите дату в формате ДД.ММ.ГГГГ")
 
 
-def input_choice(prompt: str, options: dict[str, str]) -> str:
+def input_choice(prompt: str, options: dict[K, str]) -> K:
     """Предложить выбрать один из вариантов и вернуть его ключ."""
     keys = list(options)
     for number, key in enumerate(keys, start=1):

@@ -2,84 +2,111 @@ from datetime import date
 
 import pytest
 
-from equipment import (
-    add_characteristic,
+from models import Characteristic, Entity, Equipment, Server, State
+from models.equipment import (
     add_equipment,
-    change_state,
+    change_equipment_state,
+    count_by_server,
     count_installed,
+    get_server_equipment,
     has_free_slot,
     install_equipment,
     uninstall_equipment,
 )
-from servers import add_server
 
 INSTALL_DATE = date(2026, 9, 15)
+WORKING = State(1, "working", "Исправно", True)
+FAULTY = State(2, "faulty", "Неисправно", False)
+DECOMMISSIONED = State(4, "decommissioned", "Списано", False)
 
 
-def make_data() -> tuple[dict[int, dict], list[dict]]:
-    servers: dict[int, dict] = {}
-    add_server(servers, "srv-web-01", "Стойка A2", 1)
-    equipment: list[dict] = []
-    add_equipment(equipment, "Kingston DDR4", "RAM", "RAM-1")
-    add_equipment(equipment, "Kingston DDR4", "RAM", "RAM-2")
-    return servers, equipment
+def make_data() -> tuple[Server, list[Equipment]]:
+    server = Server(1, "srv-web-01", "Стойка A2", 1)
+    equipment: list[Equipment] = []
+    add_equipment(equipment, "Kingston DDR4", "RAM", "RAM-1", WORKING)
+    add_equipment(equipment, "Kingston DDR4", "RAM", "RAM-2", WORKING)
+    return server, equipment
 
 
-def test_add_equipment():
-    _, equipment = make_data()
-    assert len(equipment) == 2
-    assert equipment[1]["id"] == 2
-    assert equipment[0]["server_id"] is None
+def test_equipment_creation():
+    item = Equipment(1, "Samsung PM893", "SSD", "SSD-1", WORKING)
+    assert item.id == 1
+    assert item.state is WORKING
+    assert item.server is None
+    assert not item.is_installed
+    assert item.characteristics == []
+    assert str(item) == ("[1] Samsung PM893 (SSD), S/N SSD-1 — Исправно, "
+                         "на складе")
 
 
 def test_duplicate_serial_number_forbidden():
     _, equipment = make_data()
     with pytest.raises(ValueError):
-        add_equipment(equipment, "Другой модуль", "RAM", "RAM-1")
+        add_equipment(equipment, "Другой модуль", "RAM", "RAM-1", WORKING)
 
 
-def test_add_characteristic_replaces_value():
-    _, equipment = make_data()
-    add_characteristic(equipment[0], "Объем", "16", "ГБ")
-    add_characteristic(equipment[0], "объем", "32", "ГБ")
-    assert equipment[0]["characteristics"] == [
-        {"name": "Объем", "value": "32", "unit": "ГБ"}
-    ]
+def test_characteristics():
+    item = Equipment(1, "Kingston DDR4", "RAM", "RAM-1", WORKING)
+    item.add_characteristic(Characteristic("Объем", "16", "ГБ"))
+    item.add_characteristic(Characteristic("объем", "32", "ГБ"))
+    assert len(item.characteristics) == 1
+    assert str(item.get_characteristic("ОБЪЕМ")) == "объем: 32 ГБ"
 
 
-def test_install_equipment():
-    servers, equipment = make_data()
-    install_equipment(servers, equipment, 1, 1, INSTALL_DATE)
-    assert equipment[0]["server_id"] == 1
-    assert equipment[0]["installed_at"] == "2026-09-15"
-    assert count_installed(equipment, 1) == 1
+def test_install_links_objects():
+    server, equipment = make_data()
+    install_equipment(equipment, equipment[0], server, INSTALL_DATE)
+    assert equipment[0].server is server
+    assert equipment[0].installed_at == INSTALL_DATE
+    assert get_server_equipment(equipment, server) == [equipment[0]]
+    assert count_by_server(equipment) == {1: 1}
 
 
 def test_install_into_full_server_forbidden():
-    servers, equipment = make_data()
-    install_equipment(servers, equipment, 1, 1, INSTALL_DATE)
-    assert not has_free_slot(servers, equipment, 1)
+    server, equipment = make_data()
+    install_equipment(equipment, equipment[0], server, INSTALL_DATE)
+    assert not has_free_slot(equipment, server)
     with pytest.raises(ValueError):
-        install_equipment(servers, equipment, 2, 1, INSTALL_DATE)
+        install_equipment(equipment, equipment[1], server, INSTALL_DATE)
 
 
 def test_install_faulty_equipment_forbidden():
-    servers, equipment = make_data()
-    change_state(equipment, 1, "faulty")
+    server, equipment = make_data()
+    equipment[0].change_state(FAULTY)
     with pytest.raises(ValueError):
-        install_equipment(servers, equipment, 1, 1, INSTALL_DATE)
+        install_equipment(equipment, equipment[0], server, INSTALL_DATE)
+    assert not equipment[0].is_installed
 
 
 def test_uninstall_frees_slot():
-    servers, equipment = make_data()
-    install_equipment(servers, equipment, 1, 1, INSTALL_DATE)
+    server, equipment = make_data()
+    install_equipment(equipment, equipment[0], server, INSTALL_DATE)
     assert uninstall_equipment(equipment, 1)
-    assert has_free_slot(servers, equipment, 1)
+    assert count_installed(equipment, server) == 0
+    install_equipment(equipment, equipment[1], server, INSTALL_DATE)
     assert not uninstall_equipment(equipment, 1)
 
 
 def test_decommission_uninstalls_equipment():
-    servers, equipment = make_data()
-    install_equipment(servers, equipment, 1, 1, INSTALL_DATE)
-    assert change_state(equipment, 1, "decommissioned")
-    assert equipment[0]["server_id"] is None
+    server, equipment = make_data()
+    install_equipment(equipment, equipment[0], server, INSTALL_DATE)
+    assert change_equipment_state(equipment, 1, DECOMMISSIONED)
+    assert equipment[0].server is None
+    assert not change_equipment_state(equipment, 99, WORKING)
+
+
+def test_to_dict_stores_ids_instead_of_objects():
+    server, equipment = make_data()
+    install_equipment(equipment, equipment[0], server, INSTALL_DATE)
+    data = equipment[0].to_dict()
+    assert data["server_id"] == 1
+    assert data["state_id"] == 1
+    assert data["installed_at"] == "2026-09-15"
+
+
+def test_entity_polymorphism():
+    server, equipment = make_data()
+    objects: list[Entity] = [server, WORKING, equipment[0]]
+    assert [item.to_dict()["id"] for item in objects] == [1, 1, 1]
+    with pytest.raises(NotImplementedError):
+        Entity(1).to_dict()
