@@ -1,0 +1,90 @@
+[
+    {
+        "id": 1,
+        "name": "Intel Xeon Silver 4314",
+        "kind": "CPU",
+        "serial_number": "CPU-4314-0001",
+        "server_id": 1,
+        "installed_at": "2026-09-01",
+        "state": "working",
+        "characteristics": [
+            {"name": "Ядра", "value": "16", "unit": "шт."},
+            {"name": "Частота", "value": "2.4", "unit": "ГГц"}
+        ]
+    },
+    {
+        "id": 2,
+        "name": "Kingston DDR4 ECC",
+        "kind": "RAM",
+        "serial_number": "RAM-KSM32-0012",
+        "server_id": 1,
+        "installed_at": "2026-09-01",
+        "state": "working",
+        "characteristics": [
+            {"name": "Объем", "value": "32", "unit": "ГБ"},
+            {"name": "Частота", "value": "3200", "unit": "МГц"}
+        ]
+    },
+    {
+        "id": 3,
+        "name": "Samsung PM893",
+        "kind": "SSD",
+        "serial_number": "SSD-PM893-0101",
+        "server_id": 1,
+        "installed_at": "2026-09-02",
+        "state": "working",
+        "characteristics": [
+            {"name": "Объем", "value": "960", "unit": "ГБ"}
+        ]
+    },
+    {
+        "id": 4,
+        "name": "Seagate Exos X18",
+        "kind": "HDD",
+        "serial_number": "HDD-X18-0202",
+        "server_id": 3,
+        "installed_at": "2026-08-15",
+        "state": "faulty",
+        "characteristics": [
+            {"name": "Объем", "value": "18", "unit": "ТБ"},
+            {"name": "Скорость вращения", "value": "7200", "unit": "об/мин"}
+        ]
+    },
+    {
+        "id": 5,
+        "name": "Intel X710-DA4",
+        "kind": "Сетевая карта",
+        "serial_number": "NIC-X710-0007",
+        "server_id": 2,
+        "installed_at": "2026-09-10",
+        "state": "working",
+        "characteristics": [
+            {"name": "Скорость", "value": "10", "unit": "Гбит/с"},
+            {"name": "Порты", "value": "4", "unit": "шт."}
+        ]
+    },
+    {
+        "id": 6,
+        "name": "Kingston DDR4 ECC",
+        "kind": "RAM",
+        "serial_number": "RAM-KSM32-0013",
+        "server_id": null,
+        "installed_at": null,
+        "state": "working",
+        "characteristics": [
+            {"name": "Объем", "value": "32", "unit": "ГБ"}
+        ]
+    },
+    {
+        "id": 7,
+        "name": "WD RE4",
+        "kind": "HDD",
+        "serial_number": "HDD-RE4-0003",
+        "server_id": null,
+        "installed_at": null,
+        "state": "decommissioned",
+        "characteristics": [
+            {"name": "Объем", "value": "2", "unit": "ТБ"}
+        ]
+    }
+]
